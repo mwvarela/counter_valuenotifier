@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'counter_notifier.dart';
-import 'counter_state.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,27 +16,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
+class MyHomePage extends StatelessWidget {
   final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
   final counterNotifier = CounterNotifier();
+
+  MyHomePage({Key? key, required this.title}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -46,23 +40,14 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            ValueListenableBuilder<CounterState>(
-              valueListenable: counterNotifier,
-              builder: (context, state, child) {
-                if (state is LoadingCounterState) {
-                  return const CircularProgressIndicator();
-                } else if (state is SuccessCounterState) {
+            AnimatedBuilder(
+                animation: counterNotifier,
+                builder: (context, counter) {
                   return Text(
-                    '${state.value}',
+                    '${counterNotifier.value}',
                     style: Theme.of(context).textTheme.headline4,
                   );
-                } else if (state is ErrorCounterState) {
-                  return Text('Erro: {$state.message}');
-                } else {
-                  return Container();
-                }
-              },
-            )
+                })
           ],
         ),
       ),
